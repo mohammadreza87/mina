@@ -1,0 +1,25 @@
+:root {
+  --background: #05060a;
+  --foreground: #f7f7f7;
+  --muted: #a3aed0;
+  --primary: #6366f1;
+  --accent: #22d3ee;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: #ffffff;
+    --foreground: #0f172a;
+    --muted: #475569;
+  }
+}

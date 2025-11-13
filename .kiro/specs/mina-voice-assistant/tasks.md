@@ -1,0 +1,183 @@
+# Implementation Plan
+
+- [ ] 1. Set up project dependencies and configuration
+  - Install required packages: @supabase/supabase-js, framer-motion, @openai/realtime-api-beta (or equivalent WebRTC client)
+  - Create environment variable template (.env.example) with OPENAI_API_KEY, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY
+  - Configure TypeScript strict mode and path aliases in tsconfig.json
+  - Create assistants.json configuration file with at least 2 sample assistant profiles
+  - _Requirements: 1.1, 10.6_
+
+- [ ] 2. Implement Supabase database schema and memory client
+  - [ ] 2.1 Create Supabase migration file for sessions table with proper indexes
+    - Define sessions table schema with id, assistant_id, user_id, started_at, ended_at, summary, recent_topics columns
+    - Add indexes for efficient querying by assistant_id and user_id
+    - _Requirements: 6.1, 6.3, 6.4_
+  - [ ] 2.2 Implement MemoryClient class in /lib/memory/client.ts
+    - Create initialize(), createSession(), updateSession(), endSession(), getLastSession(), and getSessionHistory() methods
+    - Implement error handling with graceful degradation for database failures
+    - Add TypeScript interfaces for Session and MemoryClient
+    - _Requirements: 6.1, 6.2, 6.3, 6.4, 7.1_
+
+- [ ] 3. Build audio management module
+  - [ ] 3.1 Implement MicrophoneHandler in /lib/audio/microphone.ts
+    - Create initialize() method using navigator.mediaDevices.getUserMedia() with optimal audio constraints
+    - Implement startCapture(), stopCapture(), getStream(), isActive(), and dispose() methods
+    - Add error handling for permission denied and device not found scenarios
+    - _Requirements: 2.2, 3.1, 3.4_
+  - [ ] 3.2 Implement VoiceActivityDetector in /lib/audio/vad.ts
+    - Create VAD using Web Audio API's AnalyserNode for RMS energy calculation
+    - Implement initialize(), start(), stop(), isSpeaking(), and dispose() methods with configurable thresholds
+    - Add debouncing logic to prevent false positives from background noise
+    - _Requirements: 3.3, 5.2_
+  - [ ] 3.3 Implement AudioPlayer in /lib/audio/player.ts
+    - Create audio playback system using Web Audio API's AudioContext
+    - Implement queueAudio(), play(), pause(), clearQueue(), isPlaying(), getCurrentTime(), and dispose() methods
+    - Add buffering logic to handle network jitter and ensure smooth playback
+    - _Requirements: 4.1, 4.2, 4.4, 5.3, 5.4_
+
+- [ ] 4. Implement OpenAI Realtime API integration
+  - [ ] 4.1 Create RealtimeClient in /lib/llm/realtime-client.ts
+    - Implement WebRTC connection setup using WHIP protocol for OpenAI Realtime API
+    - Create connect(), sendAudio(), onAudioResponse(), onTranscript(), interrupt(), updateSession(), disconnect(), and getStatus() methods
+    - Add automatic reconnection logic with exponential backoff
+    - Implement session state management and configuration updates
+    - _Requirements: 2.3, 3.2, 4.1, 4.2, 4.3, 5.3, 7.4_
+  - [ ] 4.2 Implement AssistantManager in /lib/llm/assistant-manager.ts
+    - Create loadAssistants() method to read and parse assistants.json
+    - Implement getAssistant() and getAllAssistants() methods with type-safe access
+    - Add validation for assistant profile data structure
+    - _Requirements: 1.1, 1.4, 4.3, 6.4_
+
+- [ ] 5. Create Edge API route for Realtime API signaling
+  - [ ] 5.1 Implement /app/api/realtime/route.ts as Edge function
+    - Create POST handler that accepts assistantId and optional sessionContext
+    - Generate ephemeral OpenAI API key with 5-minute expiry
+    - Inject session context into system instructions when provided
+    - Return sessionId and ephemeralKey in response
+    - Add rate limiting (10 requests/minute per IP)
+    - _Requirements: 2.3, 7.4_
+
+- [ ] 6. Build UI components for assistant selection
+  - [ ] 6.1 Create AssistantCard component in /src/components/AssistantCard.tsx
+    - Design card with avatar (colored circle), name, and description
+    - Add Framer Motion animations for selection state with neon glow effect
+    - Apply TailwindCSS styling with dark background and accent colors
+    - _Requirements: 1.2, 8.1, 8.3, 8.5_
+  - [ ] 6.2 Create AssistantCarousel component in /src/components/AssistantCarousel.tsx
+    - Implement horizontal scrollable container with touch/mouse support
+    - Add smooth scroll behavior and snap-to-card functionality
+    - Integrate AssistantCard components with selection handling
+    - Implement onSelect callback to parent component
+    - _Requirements: 1.2, 1.3, 8.3, 8.4_
+
+- [ ] 7. Build call control UI components
+  - [ ] 7.1 Create CallButton component in /src/components/CallButton.tsx
+    - Design large circular button (minimum 64x64px) with microphone icon
+    - Add animated pulse effect when enabled using Framer Motion
+    - Implement disabled state styling when no assistant selected
+    - Add press animation and transform to "End Call" state during active session
+    - _Requirements: 2.1, 2.2, 8.2, 8.3, 9.1_
+  - [ ] 7.2 Create SessionRecap component in /src/components/SessionRecap.tsx
+    - Design recap card with fade-in animation
+    - Display formatted list of up to 3 recent topics from previous session
+    - Add dismiss button with smooth exit animation
+    - Handle null session state gracefully
+    - _Requirements: 7.1, 7.2, 7.3, 8.3_
+
+- [ ] 8. Build call interface components
+  - [ ] 8.1 Create AudioVisualizer component in /src/components/AudioVisualizer.tsx
+    - Implement real-time waveform visualization using canvas or SVG
+    - Add speaking indicator that differentiates user vs assistant speech
+    - Apply neon accent colors for visual feedback
+    - _Requirements: 8.1, 8.3_
+  - [ ] 8.2 Create CallInterface component in /src/components/CallInterface.tsx
+    - Design full-screen call interface with assistant info, audio visualizer, and end call button
+    - Add live transcript display area with auto-scroll
+    - Integrate AudioVisualizer component
+    - Implement onEndCall callback
+    - _Requirements: 8.1, 8.3, 9.1_
+
+- [ ] 9. Implement main page with assistant selection
+  - [ ] 9.1 Create home page in /src/app/page.tsx
+    - Load assistants using AssistantManager on component mount
+    - Render AssistantCarousel with loaded assistants
+    - Implement assistant selection state management
+    - Display CallButton with enabled state based on selection
+    - Fetch and display SessionRecap when assistant is selected
+    - Handle navigation to call interface on button press
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 2.1, 7.1, 7.2_
+
+- [ ] 10. Implement call page with voice session management
+  - [ ] 10.1 Create call page in /src/app/call/page.tsx
+    - Retrieve selected assistant from URL params or state
+    - Initialize MicrophoneHandler and request permissions on mount
+    - Display permission error modal if microphone access denied
+    - Render CallInterface component when permissions granted
+    - _Requirements: 2.2, 2.3, 2.5, 8.1_
+  - [ ] 10.2 Implement useVoiceSession custom hook in /src/hooks/useVoiceSession.ts
+    - Create hook that orchestrates MicrophoneHandler, VoiceActivityDetector, AudioPlayer, and RealtimeClient
+    - Implement session lifecycle: initialize, start, active, end
+    - Handle microphone audio capture and streaming to RealtimeClient
+    - Process incoming audio from RealtimeClient and queue to AudioPlayer
+    - Implement barge-in logic: pause AudioPlayer when VAD detects user speech
+    - Create and update Supabase session using MemoryClient
+    - Return session state, controls (start, end, interrupt), and status
+    - _Requirements: 2.3, 2.4, 3.1, 3.2, 3.3, 4.1, 4.2, 5.1, 5.2, 5.3, 5.4, 6.1, 6.2, 6.3_
+  - [ ] 10.3 Integrate useVoiceSession hook into call page
+    - Call useVoiceSession with selected assistant configuration
+    - Handle session state transitions and update UI accordingly
+    - Implement end call handler that cleans up resources and navigates back
+    - Add error boundary for graceful error handling
+    - _Requirements: 2.4, 9.2, 9.3, 9.4_
+
+- [ ] 11. Add error handling and loading states
+  - [ ] 11.1 Create ErrorModal component in /src/components/ErrorModal.tsx
+    - Design modal for displaying user-friendly error messages
+    - Add specific messages for microphone errors, network errors, and API errors
+    - Include actionable buttons (retry, close, settings)
+    - _Requirements: 2.5_
+  - [ ] 11.2 Create LoadingSpinner component in /src/components/LoadingSpinner.tsx
+    - Design animated loading indicator with neon accent color
+    - Add optional loading message prop
+    - _Requirements: 2.4, 8.3_
+  - [ ] 11.3 Implement error handling throughout application
+    - Add error boundaries to main page and call page
+    - Implement retry logic with exponential backoff for network errors
+    - Add graceful degradation for memory features when Supabase unavailable
+    - Display ErrorModal for critical errors with user-friendly messages
+    - _Requirements: 2.5_
+
+- [ ] 12. Optimize performance and add polish
+  - [ ] 12.1 Optimize audio streaming for low latency
+    - Fine-tune audio buffer sizes (target 50-100ms)
+    - Verify WebRTC connection uses optimal codec settings
+    - Test end-to-end latency and adjust configurations
+    - _Requirements: 3.2, 4.1_
+  - [ ] 12.2 Optimize UI animations and responsiveness
+    - Ensure all animations use GPU-accelerated CSS transforms
+    - Add debouncing to expensive operations
+    - Verify 60 FPS performance on target devices
+    - Test responsive design on mobile devices
+    - _Requirements: 8.3_
+  - [ ] 12.3 Add cleanup and resource management
+    - Verify all audio contexts and streams are disposed on unmount
+    - Ensure WebRTC connections close properly
+    - Add memory leak detection in development mode
+    - _Requirements: 9.3, 9.4_
+
+- [ ] 13. Final integration and end-to-end testing
+  - [ ] 13.1 Test complete user flow from assistant selection to call completion
+    - Verify assistant selection and carousel interaction
+    - Test call initiation and WebRTC connection establishment
+    - Validate real-time audio streaming quality and latency
+    - Confirm barge-in functionality works smoothly
+    - Verify session data persists correctly in Supabase
+    - Test session recap displays on return visits
+    - Validate call termination and cleanup
+    - _Requirements: 1.1, 1.2, 1.3, 2.1, 2.2, 2.3, 3.1, 3.2, 4.1, 5.1, 5.2, 6.1, 6.3, 7.1, 7.2, 9.2, 9.3_
+  - [ ] 13.2 Test error scenarios and recovery
+    - Test microphone permission denied flow
+    - Simulate network disconnection during call
+    - Test Supabase unavailability and graceful degradation
+    - Verify error messages are user-friendly
+    - _Requirements: 2.5_

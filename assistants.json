@@ -1,0 +1,49 @@
+{
+  "assistants": [
+    {
+      "id": "mina-creative",
+      "name": "Mina",
+      "voiceTag": "Warm & Creative",
+      "description": "Your creative brainstorming partner",
+      "mood": "Hey, ready to talk?",
+      "avatarColor": "#8B5CF6",
+      "accentColor": "#A78BFA"
+    },
+    {
+      "id": "echo-thoughtful",
+      "name": "Echo",
+      "voiceTag": "Deep & Thoughtful",
+      "description": "Your philosophical companion",
+      "mood": "What's on your mind?",
+      "avatarColor": "#06B6D4",
+      "accentColor": "#22D3EE"
+    },
+    {
+      "id": "nova-energetic",
+      "name": "Nova",
+      "voiceTag": "Bright & Energetic",
+      "description": "Your motivational friend",
+      "mood": "Let's make today amazing!",
+      "avatarColor": "#F59E0B",
+      "accentColor": "#FBBF24"
+    },
+    {
+      "id": "sage-calm",
+      "name": "Sage",
+      "voiceTag": "Calm & Wise",
+      "description": "Your mindful guide",
+      "mood": "I'm here to listen...",
+      "avatarColor": "#10B981",
+      "accentColor": "#34D399"
+    },
+    {
+      "id": "luna-dreamy",
+      "name": "Luna",
+      "voiceTag": "Soft & Dreamy",
+      "description": "Your late-night confidant",
+      "mood": "Tell me your dreams...",
+      "avatarColor": "#EC4899",
+      "accentColor": "#F472B6"
+    }
+  ]
+}
