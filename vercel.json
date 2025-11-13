@@ -1,17 +1,6 @@
 {
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
   "framework": "nextjs",
-  "regions": ["iad1"],
-  "env": {
-    "NEXTAUTH_URL": "https://mina.vercel.app"
-  },
-  "build": {
-    "env": {
-      "NEXT_PUBLIC_BUILD_TIME": "@now"
-    }
-  },
+  "buildCommand": "npm run build",
   "headers": [
     {
       "source": "/(.*)",
