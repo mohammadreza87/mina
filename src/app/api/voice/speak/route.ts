@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const audioBuffer = await synthesizeSpeechToBuffer(text, voice);
-    return new NextResponse(audioBuffer, {
+    return new NextResponse(new Uint8Array(audioBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'audio/mpeg',

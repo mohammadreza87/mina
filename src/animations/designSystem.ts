@@ -360,7 +360,7 @@ export const scrollReveal = (
       duration: DURATION.slow,
       ease: EASE.smooth,
       scrollTrigger: {
-        trigger: options.trigger || element,
+        trigger: (options.trigger || element) as gsap.DOMTarget,
         start: options.start || 'top 80%',
         end: options.end || 'top 20%',
         toggleActions: 'play none none reverse',

@@ -45,7 +45,7 @@ export class CreateChatUseCase {
     if (!validationResult.success) {
       throw new ValidationError(
         'Invalid chat data',
-        validationResult.error.errors
+        validationResult.error.issues
       );
     }
 

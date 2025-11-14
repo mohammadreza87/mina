@@ -49,7 +49,7 @@ export class SendMessageUseCase {
     if (!validationResult.success) {
       throw new ValidationError(
         'Invalid message data',
-        validationResult.error.errors
+        validationResult.error.issues
       );
     }
 

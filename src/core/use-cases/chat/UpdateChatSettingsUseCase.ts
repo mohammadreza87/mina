@@ -46,7 +46,7 @@ export class UpdateChatSettingsUseCase {
     if (!validationResult.success) {
       throw new ValidationError(
         'Invalid chat settings data',
-        validationResult.error.errors
+        validationResult.error.issues
       );
     }
 

@@ -18,7 +18,7 @@ export async function transcribeAudioBuffer(
   });
 
   const transcription = await openai.audio.transcriptions.create({
-    file,
+    file: file as any,
     model: 'whisper-1',
   });
 

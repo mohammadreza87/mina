@@ -107,7 +107,7 @@ function handleError(error: unknown): NextResponse {
       {
         error: error.message,
         code: error.code,
-        field: error.field,
+        details: error.details,
       },
       { status: error.statusCode }
     );

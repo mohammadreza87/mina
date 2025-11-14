@@ -373,8 +373,9 @@ export const GlassNavBar: React.FC<{
 export const GlassSection: React.FC<{
   children: React.ReactNode;
   className?: string;
-}> = ({ children, className = '' }) => (
-  <section className={`py-16 md:py-24 px-4 ${className}`}>
+  id?: string;
+}> = ({ children, className = '', id }) => (
+  <section id={id} className={`py-16 md:py-24 px-4 ${className}`}>
     <div className="max-w-7xl mx-auto">{children}</div>
   </section>
 );
