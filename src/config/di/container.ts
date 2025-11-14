@@ -37,11 +37,53 @@ container
 
 // ===== USE CASES =====
 // Use cases are stateless and safe to share - using singleton scope for performance
-container.bind<CreateChatUseCase>(TYPES.CreateChatUseCase).to(CreateChatUseCase).inSingletonScope();
-container.bind<GetUserChatsUseCase>(TYPES.GetUserChatsUseCase).to(GetUserChatsUseCase).inSingletonScope();
-container.bind<GetChatByIdUseCase>(TYPES.GetChatByIdUseCase).to(GetChatByIdUseCase).inSingletonScope();
-container.bind<SendMessageUseCase>(TYPES.SendMessageUseCase).to(SendMessageUseCase).inSingletonScope();
-container.bind<UpdateChatSettingsUseCase>(TYPES.UpdateChatSettingsUseCase).to(UpdateChatSettingsUseCase).inSingletonScope();
-container.bind<DeleteChatUseCase>(TYPES.DeleteChatUseCase).to(DeleteChatUseCase).inSingletonScope();
+// Using manual binding (no decorators) for Turbopack compatibility
+container
+  .bind<CreateChatUseCase>(TYPES.CreateChatUseCase)
+  .toDynamicValue(() => {
+    const repo = container.get<IChatRepository>(TYPES.IChatRepository);
+    return new CreateChatUseCase(repo);
+  })
+  .inSingletonScope();
+
+container
+  .bind<GetUserChatsUseCase>(TYPES.GetUserChatsUseCase)
+  .toDynamicValue(() => {
+    const repo = container.get<IChatRepository>(TYPES.IChatRepository);
+    return new GetUserChatsUseCase(repo);
+  })
+  .inSingletonScope();
+
+container
+  .bind<GetChatByIdUseCase>(TYPES.GetChatByIdUseCase)
+  .toDynamicValue(() => {
+    const repo = container.get<IChatRepository>(TYPES.IChatRepository);
+    return new GetChatByIdUseCase(repo);
+  })
+  .inSingletonScope();
+
+container
+  .bind<SendMessageUseCase>(TYPES.SendMessageUseCase)
+  .toDynamicValue(() => {
+    const repo = container.get<IChatRepository>(TYPES.IChatRepository);
+    return new SendMessageUseCase(repo);
+  })
+  .inSingletonScope();
+
+container
+  .bind<UpdateChatSettingsUseCase>(TYPES.UpdateChatSettingsUseCase)
+  .toDynamicValue(() => {
+    const repo = container.get<IChatRepository>(TYPES.IChatRepository);
+    return new UpdateChatSettingsUseCase(repo);
+  })
+  .inSingletonScope();
+
+container
+  .bind<DeleteChatUseCase>(TYPES.DeleteChatUseCase)
+  .toDynamicValue(() => {
+    const repo = container.get<IChatRepository>(TYPES.IChatRepository);
+    return new DeleteChatUseCase(repo);
+  })
+  .inSingletonScope();
 
 export { container };

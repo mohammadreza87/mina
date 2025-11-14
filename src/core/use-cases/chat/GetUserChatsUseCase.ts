@@ -1,5 +1,3 @@
-import { inject, injectable } from 'inversify';
-import { TYPES } from '@/config/di/types';
 import { Chat } from '@/core/domain/entities/Chat';
 import { IChatRepository } from '@/core/ports/repositories/IChatRepository';
 import { ValidationError } from '@/shared/lib/errors/ValidationError';
@@ -7,11 +5,8 @@ import { ValidationError } from '@/shared/lib/errors/ValidationError';
 /**
  * Use Case: Get all chats for a user
  */
-@injectable()
 export class GetUserChatsUseCase {
-  constructor(
-    @inject(TYPES.IChatRepository) private chatRepository: IChatRepository
-  ) {}
+  constructor(private chatRepository: IChatRepository) {}
 
   async execute(userId: string): Promise<Chat[]> {
     if (!userId || userId.trim() === '') {

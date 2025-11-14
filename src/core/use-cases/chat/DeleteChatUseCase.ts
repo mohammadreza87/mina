@@ -1,5 +1,3 @@
-import { inject, injectable } from 'inversify';
-import { TYPES } from '@/config/di/types';
 import type { IChatRepository } from '@/core/ports/repositories/IChatRepository';
 import { ChatId } from '@/core/domain/value-objects/ChatId';
 import { NotFoundError } from '@/shared/lib/errors/NotFoundError';
@@ -8,12 +6,8 @@ import { NotFoundError } from '@/shared/lib/errors/NotFoundError';
  * Use Case: Delete Chat
  * Deletes a chat by its ID
  */
-@injectable()
 export class DeleteChatUseCase {
-  constructor(
-    @inject(TYPES.IChatRepository)
-    private readonly chatRepository: IChatRepository
-  ) {}
+  constructor(private readonly chatRepository: IChatRepository) {}
 
   async execute(chatId: string, userId: string): Promise<void> {
     // Find the chat to verify it exists and belongs to the user

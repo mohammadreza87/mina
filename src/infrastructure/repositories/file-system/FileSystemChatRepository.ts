@@ -1,6 +1,5 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { injectable } from 'inversify';
 import { IChatRepository } from '@/core/ports/repositories/IChatRepository';
 import { Chat } from '@/core/domain/entities/Chat';
 import { ChatId } from '@/core/domain/value-objects/ChatId';
@@ -34,8 +33,7 @@ type ChatRecord = {
 const DATA_DIR = path.join(process.cwd(), '.data');
 const DATA_FILE = path.join(DATA_DIR, 'chats.json');
 
-@injectable()
-export class FileSystemChatRepository implements IChatRepository {
+export class FileSystemChatRepository extends IChatRepository {
   private async ensureStore(): Promise<void> {
     await fs.mkdir(DATA_DIR, { recursive: true });
     try {

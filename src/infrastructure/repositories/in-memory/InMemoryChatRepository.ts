@@ -1,4 +1,3 @@
-import { injectable } from 'inversify';
 import { IChatRepository } from '@/core/ports/repositories/IChatRepository';
 import { Chat } from '@/core/domain/entities/Chat';
 import { ChatId } from '@/core/domain/value-objects/ChatId';
@@ -8,8 +7,7 @@ import { ChatId } from '@/core/domain/value-objects/ChatId';
  * Useful for development and testing
  * Data is lost on server restart
  */
-@injectable()
-export class InMemoryChatRepository implements IChatRepository {
+export class InMemoryChatRepository extends IChatRepository {
   private chats: Map<string, Chat> = new Map();
 
   async findById(id: ChatId): Promise<Chat | null> {

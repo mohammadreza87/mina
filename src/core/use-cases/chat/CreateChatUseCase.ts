@@ -1,4 +1,3 @@
-import { inject, injectable } from 'inversify';
 import { TYPES } from '@/config/di/types';
 import { Chat } from '@/core/domain/entities/Chat';
 import { IChatRepository } from '@/core/ports/repositories/IChatRepository';
@@ -33,11 +32,8 @@ const createChatSchema = z.object({
  * Use Case: Create a new chat
  * Business logic for chat creation with validation
  */
-@injectable()
 export class CreateChatUseCase {
-  constructor(
-    @inject(TYPES.IChatRepository) private chatRepository: IChatRepository
-  ) {}
+  constructor(private chatRepository: IChatRepository) {}
 
   async execute(dto: CreateChatDTO): Promise<Chat> {
     // 1. Validate input
